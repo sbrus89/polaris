@@ -19,8 +19,14 @@ class Forward(OceanModelStep):
     ----------
     resolution : float
         The resolution of the test case in km
+
+    timestep : float
+        The resolution of the test case in km
+
+    convergence_type : str
+        The type of convergence study to run
     """
-    def __init__(self, test_case, resolution,
+    def __init__(self, test_case, resolution, timestep=None,
                  ntasks=None, min_tasks=None, openmp_threads=1):
         """
         Create a new test case
@@ -46,16 +52,35 @@ class Forward(OceanModelStep):
             the number of OpenMP threads the step will use
         """
         self.resolution = resolution
-        super().__init__(test_case=test_case,
-                         name=f'forward_{resolution}km',
-                         subdir=f'{resolution}km/forward',
-                         ntasks=ntasks, min_tasks=min_tasks,
-                         openmp_threads=openmp_threads)
+        self.timestep = timestep
 
-        self.add_input_file(filename='initial_state.nc',
-                            target='../initial_state/initial_state.nc')
-        self.add_input_file(filename='graph.info',
-                            target='../initial_state/culled_graph.info')
+        if self.timestep:
+            # Convergence study in time
+            self.convergence_type = 'time'
+            super().__init__(test_case=test_case,
+                             name=f'forward_dt_{timestep}',
+                             subdir=f'dt_{timestep}/forward',
+                             ntasks=ntasks, min_tasks=min_tasks,
+                             openmp_threads=openmp_threads)
+            self.add_input_file(filename='initial_state.nc',
+                                target=f'../../{resolution}km/initial_state/'
+                                       'initial_state.nc')
+            self.add_input_file(filename='graph.info',
+                                target=f'../../{resolution}km/initial_state/'
+                                       'culled_graph.info')
+        else:
+            # Convergence study in space
+            self.convergence_type = 'space'
+            super().__init__(test_case=test_case,
+                             name=f'forward_{resolution}km',
+                             subdir=f'{resolution}km/forward',
+                             ntasks=ntasks, min_tasks=min_tasks,
+                             openmp_threads=openmp_threads)
+
+            self.add_input_file(filename='initial_state.nc',
+                                target='../initial_state/initial_state.nc')
+            self.add_input_file(filename='graph.info',
+                                target='../initial_state/culled_graph.info')
 
         self.add_output_file(filename='output.nc')
 
@@ -105,11 +130,14 @@ class Forward(OceanModelStep):
         """
         super().dynamic_model_config(at_setup=at_setup)
 
-        # dt is proportional to resolution
         config = self.config
         section = config['manufactured_solution']
-        dt_per_km = section.getfloat('dt_per_km')
-        dt = dt_per_km * self.resolution
+        if self.convergence_type == 'time':
+            dt = self.timestep * 60.0
+        else:
+            # dt is proportional to resolution
+            dt_per_km = section.getfloat('dt_per_km')
+            dt = dt_per_km * self.resolution
         # https://stackoverflow.com/a/1384565/7728169
         dt_str = time.strftime('%H:%M:%S', time.gmtime(dt))
         exact_solution = ExactSolution(config)
