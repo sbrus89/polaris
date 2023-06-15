@@ -1,5 +1,7 @@
 from polaris import TestGroup
-from polaris.ocean.tests.manufactured_solution.convergence import Convergence
+from polaris.ocean.tests.manufactured_solution.space_convergence import (
+    SpaceConvergence,
+)
 from polaris.ocean.tests.manufactured_solution.time_convergence import (
     TimeConvergence,
 )
@@ -16,5 +18,5 @@ class ManufacturedSolution(TestGroup):
         """
         super().__init__(component=component, name='manufactured_solution')
 
-        self.add_test_case(Convergence(test_group=self))
+        self.add_test_case(SpaceConvergence(test_group=self))
         self.add_test_case(TimeConvergence(test_group=self))

@@ -8,9 +8,9 @@ from polaris.ocean.tests.manufactured_solution.viz import Viz
 from polaris.validate import compare_variables
 
 
-class Convergence(TestCase):
+class SpaceConvergence(TestCase):
     """
-    The convergence test case for the manufactured solution test group
+    The spatial convergence test case for the manufactured solution test group
 
     Attributes
     ----------
@@ -27,7 +27,7 @@ class Convergence(TestCase):
                      ManufacturedSolution
             The test group that this test case belongs to
         """
-        name = 'convergence'
+        name = 'space_convergence'
         super().__init__(test_group=test_group, name=name)
 
         self.resolutions = [200, 100, 50, 25]
