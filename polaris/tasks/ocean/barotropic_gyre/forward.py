@@ -88,6 +88,7 @@ class Forward(OceanModelStep):
         self.add_yaml_file('polaris.ocean.config', 'output.yaml')
 
         self.add_input_file(filename='init.nc', target='../init/init.nc')
+        self.add_input_file(filename='OmegaMesh.nc', target='../init/init.nc')
         self.add_input_file(filename='forcing.nc', target='../init/forcing.nc')
 
         self.add_output_file(
@@ -156,14 +157,31 @@ class Forward(OceanModelStep):
             output_interval_str = time.strftime(
                 '0000_%H:%M:%S', time.gmtime(run_duration)
             )
+            output_freq = int(run_duration)
         else:
             stop_time_str = time.strftime('0004-01-01_00:00:00')
             output_interval_str = time.strftime('0000-01-00_00:00:00')
+            output_freq = 30 * 86400
+
+        time_integrator = config.get('barotropic_gyre', 'time_integrator')
+        time_integrator_map = dict([('RK4', 'RungeKutta4')])
+        model = config.get('ocean', 'model')
+        if model == 'omega':
+            if time_integrator in time_integrator_map.keys():
+                time_integrator = time_integrator_map[time_integrator]
+            else:
+                print(
+                    'Warning: mapping from time integrator '
+                    f'{time_integrator} to omega not found, '
+                    'retaining name given in config'
+                )
 
         replacements = dict(
+            time_integrator=time_integrator,
             dt=dt_str,
             stop_time=stop_time_str,
             output_interval=output_interval_str,
+            output_freq=f'{output_freq}',
             nu=f'{nu:02g}',
         )
 

@@ -4,33 +4,10 @@ ocean:
     config_run_duration: none
   time_integration:
     config_dt: {{ dt }}
-    config_time_integrator: RK4
+    config_time_integrator: {{ time_integrator }}
   hmix_del2:
     config_use_mom_del2: true
     config_mom_del2: {{ nu }}
-  streams:
-    mesh:
-      filename_template: init.nc
-    input:
-      filename_template: init.nc
-    forcing:
-      filename_template: forcing.nc
-      input_interval: initial_only
-      type: input
-      contents:
-      - windStressZonal
-      - windStressMeridional
-    restart: {}
-    output:
-      type: output
-      filename_template: output.nc
-      output_interval: {{ output_interval }}
-      clobber_mode: truncate
-      contents:
-      - xtime
-      - normalVelocity
-      - layerThickness
-      - ssh
 
 mpas-ocean:
   advection:
@@ -43,8 +20,45 @@ mpas-ocean:
     config_disable_vel_hadv: true
     config_disable_vel_hmix: false
     config_disable_tr_all_tend: true
+  streams:
+    mesh:
+      filename_template: init.nc
+    input:
+      filename_template: init.nc
+    restart: {}
+    output:
+      type: output
+      filename_template: output.nc
+      output_interval: {{ output_interval }}
+      clobber_mode: truncate
+      contents:
+      - xtime
+      - normalVelocity
+      - layerThickness
+      - ssh
 
 Omega:
   Tendencies:
     VelDiffTendencyEnable: true
     VelHyperDiffTendencyEnable: false
+  IOStreams:
+    InitialVertCoord:
+      Filename: init.nc
+    InitialState:
+      UsePointerFile: false
+      Filename: init.nc
+      Contents:
+      - NormalVelocity
+      - LayerThickness
+    History:
+      Filename: output.nc
+      Freq: {{ output_freq }}
+      FreqUnits: Seconds
+      IfExists: append
+      # effectively never
+      FileFreq: 9999
+      FileFreqUnits: years
+      Contents:
+      - NormalVelocity
+      - LayerThickness
+      - SshCell
