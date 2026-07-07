@@ -832,15 +832,16 @@ def _add_reconstructed_variables_to_dataset(
                 f'The sizes of coefficient dataset do not match mesh '
                 f'dataset; exiting without reconstructing {out_var_name}'
             )
+            return ds
 
-            reconstruct_variable(
-                out_var_name,
-                ds[variable],
-                ds_mesh,
-                coeffs_reconstruct,
-                ds,
-                quiet=True,
-            )
+        reconstruct_variable(
+            out_var_name,
+            ds[variable],
+            ds_mesh,
+            coeffs_reconstruct,
+            ds,
+            quiet=False,
+        )
 
         if not (
             f'{out_var_name}Zonal' in ds and f'{out_var_name}Meridional' in ds
