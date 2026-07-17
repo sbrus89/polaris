@@ -205,6 +205,16 @@ config:
     config_disable_vel_vmix: not VelVertMixTendencyEnable
 
 - section:
+    debug: Tendencies
+  options:
+    config_disable_tr_sflux: not SfcTracerForcingTendencyEnable
+
+- section:
+    debug: Tendencies
+  options:
+    config_disable_thick_sflux: not SfcThicknessForcingTendencyEnable
+
+- section:
     tracer_forcing_activeTracers: SurfaceRestoring
   options:
     config_salinity_restoring_constant_piston_velocity: PistonVelocity
