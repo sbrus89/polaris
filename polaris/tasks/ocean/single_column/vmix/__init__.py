@@ -37,6 +37,7 @@ class VMix(Task):
         self.add_step(
             Forward(
                 component=component,
+                init=init,
                 indir=f'{indir}/{name}',
                 ntasks=1,
                 min_tasks=1,
@@ -50,6 +51,7 @@ class VMix(Task):
         self.add_step(
             Forward(
                 component=component,
+                init=init,
                 indir=f'{indir}/{name}',
                 ntasks=1,
                 min_tasks=1,
@@ -62,6 +64,7 @@ class VMix(Task):
         self.add_step(
             Forward(
                 component=component,
+                init=init,
                 indir=f'{indir}/{name}',
                 ntasks=1,
                 min_tasks=1,
@@ -76,6 +79,7 @@ class VMix(Task):
         self.add_step(
             Forward(
                 component=component,
+                init=init,
                 indir=f'{indir}/{name}',
                 ntasks=1,
                 min_tasks=1,
@@ -90,6 +94,7 @@ class VMix(Task):
         self.add_step(
             Forward(
                 component=component,
+                init=init,
                 indir=f'{indir}/{name}',
                 ntasks=1,
                 min_tasks=1,
