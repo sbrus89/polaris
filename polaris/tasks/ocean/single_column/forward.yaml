@@ -45,8 +45,6 @@ Omega:
         - Base
         - Tracers
         - TracersMonthlySurfClimoCell
-        - SfcStressZonal
-        - SfcStressMeridional
     RestartRead:
       UsePointerFile: true
       PointerFilename: ocn.pointer
