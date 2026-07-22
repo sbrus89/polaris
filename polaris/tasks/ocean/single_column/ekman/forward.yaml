@@ -72,4 +72,16 @@ Omega:
       FileFreqUnits: years
       Contents:
       - State
+      - Forcing
       - GeomZMid
+    Forcing:
+      UsePointerFile: false
+      Filename: forcing.nc
+      Mode: read
+      Precision: double
+      Freq: 1
+      FreqUnits: OnStartup
+      UseStartEnd: false
+      Contents:
+      - SfcStressZonal
+      - SfcStressMeridional
